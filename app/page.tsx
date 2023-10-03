@@ -1,25 +1,16 @@
-import type {InferGetServerSidePropsType, GetServerSideProps} from "next";
-import {getAllLists} from "@/utils/lists";
+import Lists from "@/components/homepage/Lists";
+import {getServerSession} from "next-auth";
+import {auth, config} from "@/utils/auth";
+import Link from "next/link";
+import List from "@/components/dashboard/List";
 
-async function getData() {
-  const lists = await getAllLists()
-  return {props: {lists}}
-}
 export default async function Page(){
-  const data = await getData()
-  const list = data.props.lists!.map(l => l.rows.map(r =>{
-    return (
-    <li key={r.id}>
-      <p>{r.createdAt.toDateString()}</p>
-      <p>{r.content}</p>
-    </li>
-  )}))
+  const session = await getServerSession(config);
   return (
     <>
       <h1>Homepage</h1>
-      <ul>
-        {list}
-      </ul>
+      {/*{session ? <Lists/> : <Link href={"/api/auth/signin"}>login</Link>}*/}
+      <List/>
     </>
   )
 }

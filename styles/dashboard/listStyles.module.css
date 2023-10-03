@@ -1,0 +1,38 @@
+.header{
+    background: antiquewhite;
+    display: flex;
+    flex-flow: column nowrap;
+    padding: 0;
+    margin: 0;
+}
+.content{
+    background: darkgray;
+    display: flex;
+    flex-flow: column nowrap;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    & .line {
+        padding: 0.2rem 0;
+    }
+    & .line:nth-child(odd){
+        background: white;
+    }
+}
+.line{
+    display: flex;
+    justify-content: center;
+}
+.footer{
+
+}
+.container{
+    box-sizing: border-box;
+    overflow: hidden;
+    width: 30rem;
+    max-width: 50vw;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    border: solid grey 2px;
+}

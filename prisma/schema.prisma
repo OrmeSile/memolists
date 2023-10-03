@@ -23,6 +23,19 @@ model User {
   password String   @db.VarChar(255)
   profile  Profile?
   lists List[]
+  role Role[]
+}
+
+model Permission {
+  id Int @id @default(autoincrement())
+  role Role[]
+  userId Int @unique
+}
+
+model Role {
+  id Int @id @default(autoincrement())
+  permission Permission[]
+  user User[]
 }
 
 model ListRow {
