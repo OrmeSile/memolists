@@ -1,16 +1,20 @@
-import Lists from "@/components/homepage/Lists";
 import {getServerSession} from "next-auth";
 import {auth, config} from "@/utils/auth";
-import Link from "next/link";
 import List from "@/components/dashboard/List";
+import DashboardContainer from "@/components/dashboard/DashboardContainer";
+import homepageStyles from "@/styles/homepage/homepageStyles.module.css"
 
-export default async function Page(){
+export default async function HomePage() {
   const session = await getServerSession(config);
   return (
-    <>
-      <h1>Homepage</h1>
+    <div className={homepageStyles.container}>
       {/*{session ? <Lists/> : <Link href={"/api/auth/signin"}>login</Link>}*/}
-      <List/>
-    </>
+      <DashboardContainer>
+        <List/>
+        <List/>
+        <List/>
+      </DashboardContainer>
+      <DashboardContainer/>
+    </div>
   )
 }
