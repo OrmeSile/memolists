@@ -1,5 +1,5 @@
 import utilStyles from "@/styles/utilStyles.module.css";
-import {getAllLists} from "@/utils/lists";
+import {getAllLists} from "@/utils/database/lists";
 
 async function getData() {
   const lists = await getAllLists()

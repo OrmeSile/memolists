@@ -1,23 +1,20 @@
 'use client'
 import listStyles from "@/styles/dashboard/dashboardStyles.module.css"
-export default function List() {
-// TODO ajouter un objet de transfert de données
-  const handleDragStart = (event: React.DragEvent) => {
-  }
-  const handleDragEnd = (event: React.DragEvent) => {
-  }
+import {useDraggable} from "@dnd-kit/core";
+export default function List({list}: {list : {title: string, dateCreated: string, lines:string[]}}) {
+  const {attributes, listeners, setNodeRef, transform} = useDraggable({
+    id: `${list.title}-${list.dateCreated}`
+  })
   return(
     <div
-    onDragStart={handleDragStart}
-    onDragEnd={handleDragEnd}
       className={listStyles.container}
-    draggable={true}>
+      >
       <Header
-        title={"title"}
-        dateCreated={new Date(1588688545451).toDateString()}
+        title={list.title}
+        dateCreated={list.dateCreated}
       />
       <Content
-        lines={["hello", "world", "HELLO", "WORLD"]}
+        lines={list.lines}
       />
       <div className={listStyles.footer}></div>
     </div>

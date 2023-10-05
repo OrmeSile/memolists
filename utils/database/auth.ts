@@ -6,7 +6,7 @@ import EmailProvider from "next-auth/providers/email";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import {PrismaAdapter} from "@auth/prisma-adapter";
-import getUser from "@/utils/login";
+import getUser from "@/utils/database/login";
 import {PrismaClient} from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -43,6 +43,14 @@ export const config = {
       }
     )
   ],
+  callbacks: {
+    async session({session, user}){
+      if(session.user !== undefined && session.user !== null){
+        session.user.id = (session && session.user) ? user.id: undefined
+      }
+      return session
+    }
+  },
   adapter: PrismaAdapter(prisma),
 } satisfies NextAuthOptions;
 

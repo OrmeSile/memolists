@@ -1,38 +1,24 @@
 'use client'
-import {ReactNode, useRef, useState} from "react";
+import {ReactNode} from "react";
 import dashboardStyles from "@/styles/dashboard/dashboardStyles.module.css"
-export default function DashboardContainer({children}: {children?: ReactNode}) {
-  // TODO ajouter un objet de transfert de données
-  const [hovered, setHovered] = useState(false)
-  const handleDragEnter = (event: React.DragEvent)=> {
-    event.stopPropagation()
-    event.preventDefault()
-  }
-  const handleDragLeave = (event: React.DragEvent) => {
-    event.stopPropagation()
-    event.preventDefault()
-    setHovered(false)
-  }
-  const handleDragOver = (event: React.DragEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    setHovered(true)
-  }
+import {useDroppable} from "@dnd-kit/core";
 
-  const handleDrop = (event: React.DragEvent) => {
-    setHovered(false)
-    event.preventDefault()
-    console.log(event.dataTransfer)
+export default function DashboardContainer({children, title}: {children?: ReactNode, title: string}) {
+  // TODO ajouter un objet de transfert de données
+  const {isOver, setNodeRef} = useDroppable({
+    id: title
+  })
+  const style = {
+    backgroundColor: isOver ? 'green' : undefined
   }
   return (
     <div
-      style={hovered ? {background: "red"}: {}}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
-      className={dashboardStyles.dashboard}>
-      {children}
-    </div>
-  )
+      ref={setNodeRef}
+      className={dashboardStyles.dashboard}
+      style={style}
+    >
+      <p>{title}</p>
+    {children}
+</div>
+)
 }

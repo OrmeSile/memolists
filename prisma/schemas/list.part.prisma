@@ -9,6 +9,7 @@ model ListRow {
 model List {
   id Int @id @default(autoincrement())
   rows ListRow[]
+  title String
   user User @relation(fields: [userId], references: [id])
   userId String
 }
