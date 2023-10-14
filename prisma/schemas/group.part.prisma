@@ -1,0 +1,5 @@
+model Group {
+  id String @id @default(cuid())
+  title String
+  lists List[]
+}

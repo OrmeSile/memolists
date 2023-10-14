@@ -2,10 +2,10 @@ import {PrismaClient} from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export default async function getUser(username : string, password : string) {
+export default async function getUser(email : string, password : string) {
   try{
     const user = await prisma.user.findUnique({
-      where: {name : username}
+      where: {email : email}
     })
     if (typeof user === "undefined") return null
     await prisma.$disconnect()

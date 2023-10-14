@@ -13,24 +13,32 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//********** list.part.prisma **********//
+//********** group.part.prisma **********//
+
+model Group {
+  id String @id @default(cuid())
+  title String
+  lists List[]
+}//********** list.part.prisma **********//
 
 model ListRow {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   createdAt DateTime @default(now()) @db.Timestamptz()
-  content      String   @db.VarChar(255)
-  list List @relation(fields: [listId], references: [id] )
-  listId Int
+  content   String   @db.VarChar(255)
+  list      List     @relation(fields: [listId], references: [id])
+  listId    String
 }
 
 model List {
-  id Int @id @default(autoincrement())
-  rows ListRow[]
-  title String
-  user User @relation(fields: [userId], references: [id])
+  id     String    @id @default(cuid())
+  rows   ListRow[]
+  title  String
+  user   User      @relation(fields: [userId], references: [id])
+  group  Group[]
   userId String
+  posX   Int @default(0)
+  posY   Int @default(0)
 }
-
 //********** user.part.prisma **********//
 
 model Account {
@@ -75,7 +83,7 @@ model User {
 }
 
 model Profile {
-  id     Int     @id @default(autoincrement())
+  id     String     @id @default(cuid())
   bio    String?
   user   User    @relation(fields: [userId], references: [id])
   userId String  @unique

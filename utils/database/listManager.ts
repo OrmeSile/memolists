@@ -1,22 +1,36 @@
-import {List, User} from "@prisma/client";
-import {prisma} from "@/utils/database/databaseClient";
+import prisma from "@/utils/database/databaseClient";
+import {List as DBList} from "@prisma/client"
+import {toAppList, toDBList} from "@/utils/converters/ListConverter";
 
-async function createList(list: {title: string, userId: string}) {
-  return prisma.list.create(
+async function createList(list: {title: string, userId: string, posX: number, posY: number}) {
+  return toAppList(await prisma.list.create(
       {data: list}
-  );
+  ))
 }
 
-async function getAllLists() {
+async function getAllLists()  {
   return prisma.list.findMany();
 }
 
-async function getOneList(id :number) {
+async function getOneList(id :string) {
     return prisma.list.findUnique({where: {id: id}})
+}
+
+async function getListsOfUser(id: string) {
+  return prisma.list.findMany({where: {user: {id: id}}})
+}
+
+async function updateList(list : List) {
+  return prisma.list.update({
+    where: {id: list.id},
+    data: toDBList(list)
+  })
 }
 
 export {
   createList,
   getAllLists,
-  getOneList
+  getOneList,
+  getListsOfUser,
+  updateList
 }

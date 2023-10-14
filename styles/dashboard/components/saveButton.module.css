@@ -1,0 +1,30 @@
+.icon{
+    width: 2.5rem;
+    height: 2.5rem;
+    filter: invert(100);
+}
+.button {
+    display: flex;
+    width: 4rem;
+    height: 4rem;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(70, 155, 255);
+    border: none;
+    cursor: pointer;
+    border-radius: 2rem;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.container{
+    overflow: hidden;
+    z-index: 100;
+    gap: 1rem;
+    position: absolute;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: row;
+    right: 7rem;
+    bottom: 2rem;
+}

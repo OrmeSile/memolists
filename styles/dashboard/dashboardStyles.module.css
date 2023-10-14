@@ -1,10 +1,10 @@
 .dashboard {
-    display: flex;
+    background: darkgray;
+    position: relative;
+    box-sizing: border-box;
     border: solid black 2px;
-    width: 50vw;
-    min-height: 30vh;
-    height: auto;
-    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
 }
 .header{
     background: antiquewhite;
@@ -36,7 +36,7 @@
 }
 .container{
     box-sizing: border-box;
-    overflow: hidden;
+    overflow-x: hidden;
     width: 50vw;
     min-height: 30vh;
     border-radius: 0.5rem;

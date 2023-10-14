@@ -1,17 +1,22 @@
-import {getServerSession} from "next-auth";
-import {auth, config} from "@/utils/database/auth";
-import DashboardContainer from "@/components/dashboard/DashboardContainer";
 import homepageStyles from "@/styles/homepage/homepageStyles.module.css"
-import {DndContext} from "@dnd-kit/core";
-import AddNoteForm from "@/components/forms/AddNoteForm";
 import HomepageContainer from "@/components/homepage/HomepageContainer";
+import {List as DBList} from "@prisma/client";
+import {createList, getListsOfUser, updateList as managerUpdateList} from "@/utils/database/listManager";
+import {getServerSession} from "@/utils/database/auth";
+import Link from "next/link";
 
 export default async function HomePage() {
-  const session = await getServerSession(config);
-  return (
-    <div className={homepageStyles.container}>
-        <AddNoteForm/>
-        <HomepageContainer/>
-    </div>
-  )
+  const session = await getServerSession()
+  const initialLists = session ? await getListsOfUser(session.user.id) : null
+
+  if (session && session.user) {
+    return (
+      <div className={homepageStyles.container}>
+        <HomepageContainer
+          initialLists={initialLists}
+        />
+      </div>
+    )
+  }
+  return (<Link href={"/api/auth/signin"}>Sign in</Link>)
 }
