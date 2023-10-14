@@ -1,4 +1,4 @@
-import List from "@/components/homepage/components/List";
+import List from "@/components/home/components/List";
 import {List as DBList} from "@prisma/client";
 export function toDBList(list: List): DBList{
   return {

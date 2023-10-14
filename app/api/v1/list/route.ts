@@ -1,5 +1,5 @@
 import {getServerSession} from "@/utils/database/auth";
-import {createList, getListsOfUser, updateList} from "@/utils/database/listManager";
+import {createList, getListsOfUser, updateList, updateLists} from "@/utils/database/listManager";
 import {List as DBList} from "@prisma/client"
 import {toAppList} from "@/utils/converters/ListConverter";
 
@@ -21,6 +21,6 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   const session = await getServerSession()
   if(!session) return
-  const patchedList = await updateList(await request.json())
+  const patchedList = await updateLists(await request.json())
   return Response.json(patchedList)
 }

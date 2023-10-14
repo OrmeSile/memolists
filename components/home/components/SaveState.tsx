@@ -17,7 +17,6 @@ export default function SaveState({isSaved, saveAll}: {
   }
   const handleClick = () => {
     saveAll()
-    console.log(isSaved)
   }
   return (
     <SessionProvider>

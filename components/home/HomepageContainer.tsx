@@ -2,14 +2,12 @@
 import {DndContext, DragEndEvent, useDroppable} from "@dnd-kit/core";
 import dashboardStyles from "@/styles/dashboard/dashboardStyles.module.css"
 import {useEffect, useState} from "react";
-import AddList from "@/components/homepage/components/AddList";
-import List from "@/components/homepage/components/List";
+import AddList from "@/components/home/components/AddList";
+import List from "@/components/home/components/List";
 import {List as DBList} from "@prisma/client"
 import {useSession} from "next-auth/react";
-import {createList, updateList} from "@/utils/database/listManager";
-import {restrictToParentElement, restrictToWindowEdges} from "@dnd-kit/modifiers";
-import {restrictToEdges} from "@/utils/dndkit/restrictToScreenEdges";
-import SaveState from "@/components/homepage/components/SaveState";
+import {restrictToParentElement} from "@dnd-kit/modifiers";
+import SaveState from "@/components/home/components/SaveState";
 
 export default function HomepageContainer({initialLists}: {
   initialLists: DBList[] | null,
@@ -60,13 +58,10 @@ export default function HomepageContainer({initialLists}: {
   }
 
   const handleSaveAll = async (e: React.EventHandler<any>) => {
-    if(session && session.data?.user && lists.length > 0 && !isSaved){
-      for (const list of lists) {
-         await fetch("/api/v1/list", {method: "PATCH", body: JSON.stringify(list)})
-      }
+    if (session && session.data?.user && lists.length > 0 && !isSaved) {
+      const response = await fetch("/api/v1/list", {method: "PATCH", body: JSON.stringify(lists)})
+      if(response.ok) setIsSaved(true)
     }
-    setIsSaved(true)
-    console.log("isSaved in handleSaveAll",isSaved)
   }
 
   const handleAddGroup = async () => {
@@ -86,7 +81,7 @@ export default function HomepageContainer({initialLists}: {
   }
 
   return (
-    <DndContext onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]} autoScroll={false}>
+    <DndContext onDragEnd={handleDragEnd} modifiers={[restrictToParentElement]} autoScroll={false}>
       <main
         ref={setNodeRef}
         className={dashboardStyles.dashboard}

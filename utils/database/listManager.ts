@@ -26,11 +26,16 @@ async function updateList(list : List) {
     data: toDBList(list)
   })
 }
-
+async function updateLists(lists: List[]) {
+ return lists.map(async(list) => {
+   return await updateList(list)
+ })
+}
 export {
   createList,
   getAllLists,
   getOneList,
   getListsOfUser,
-  updateList
+  updateList,
+  updateLists
 }
