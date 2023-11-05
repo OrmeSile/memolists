@@ -1,0 +1,19 @@
+.button{
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: bold;
+    box-sizing: border-box;
+    min-width: 10rem;
+    min-height: 3rem;
+    background: rgb(58, 128, 255);
+    border: none;
+    border-radius: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.button:hover{
+    background-color: rgb(0, 140, 255);
+}

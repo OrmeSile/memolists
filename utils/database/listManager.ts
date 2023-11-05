@@ -17,7 +17,7 @@ async function getOneList(id :string) {
 }
 
 async function getListsOfUser(id: string) {
-  return prisma.list.findMany({where: {user: {id: id}}})
+  return prisma.list.findMany({where: {user: {id: id}}, include: {rows: true}})
 }
 
 async function updateList(list : List) {

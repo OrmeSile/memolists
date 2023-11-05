@@ -1,0 +1,20 @@
+.row{
+    list-style: none;
+    padding: 0;
+    min-height: 3rem;
+    display: flex;
+    flex-flow: column nowrap;
+    background: rgb(255,255,255);
+}
+.row:nth-child(odd){
+    background: rgb(220,220,220);
+}
+
+.add{
+    background: transparent;
+    flex-grow: 1;
+    border: none;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+}

@@ -26,7 +26,7 @@
     position: absolute;
     display: flex;
     align-items: flex-end;
-    flex-direction: row;
+    flex-direction: column;
     right: 2rem;
     bottom: 2rem;
 }

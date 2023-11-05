@@ -11,7 +11,6 @@ export default async function getUser(email : string, password : string) {
     await prisma.$disconnect()
     return user
   } catch (e){
-    console.log(e)
     await prisma.$disconnect()
   }
 }

@@ -1,0 +1,38 @@
+.provider{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+}
+.placeholder{
+    height: 19rem;
+}
+.button{
+    cursor: pointer;
+    height: 4rem;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    align-items: center;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 0.5rem;
+    border: solid black 1px;
+}
+
+.text{
+    padding-left: 1rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.icon {
+    height: 70%;
+    width: 100%;
+    border-right: solid rgb(200,200,200) 1px;
+    flex-grow: 1;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}

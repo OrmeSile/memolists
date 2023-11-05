@@ -6,5 +6,6 @@ type List = {
     x: number,
     y: number
   }
-  isLastActive: boolean
+  isLastActive: boolean,
+  rows? : Row[]
 }

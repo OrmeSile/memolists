@@ -1,10 +1,10 @@
-.dashboard {
+.homeContainer {
+    display: block;
     background: darkgray;
-    position: relative;
     box-sizing: border-box;
     border: solid black 2px;
     width: 100vw;
-    height: 100vh;
+    height: 100%;
 }
 .header{
     background: antiquewhite;
@@ -35,12 +35,12 @@
     justify-content: center;
 }
 .container{
+    background: red;
     box-sizing: border-box;
     overflow-x: hidden;
-    width: 50vw;
-    min-height: 30vh;
-    border-radius: 0.5rem;
+    width: 100%;
+    height: 100%;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
-    border: solid grey 2px;
 }

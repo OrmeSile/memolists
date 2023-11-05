@@ -1,9 +1,8 @@
 'use client'
 import Image from "next/image";
 import {motion} from "framer-motion";
-import saveStyles from "@/styles/dashboard/components/saveButton.module.css"
+import saveStyles from "@/styles/home/save.module.css"
 import {SessionProvider} from "next-auth/react";
-import {Dispatch, SetStateAction, useEffect} from "react";
 import {useIsSmall} from "@/utils/hooks/useMediaQuery";
 
 export default function SaveState({isSaved, saveAll}: {

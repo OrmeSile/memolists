@@ -6,11 +6,10 @@ import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import {PrismaAdapter} from "@auth/prisma-adapter";
 import getUser from "@/utils/database/login";
-import {PrismaClient} from "@prisma/client";
 import {cookies, headers} from 'next/headers';
+import prisma from "@/utils/database/databaseClient";
 
 
-const prisma = new PrismaClient();
 
 export const config = {
   providers: [
@@ -27,6 +26,7 @@ export const config = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_ID!,
@@ -50,6 +50,13 @@ export const config = {
         session.user.id = user.id
       }
       return session
+    },
+    async redirect({ url, baseUrl}) {
+      if(url === `${baseUrl}/auth/signin`) return `${baseUrl}/home`
+      else if(url === `${baseUrl}/auth/signout`) return `${baseUrl}`
+      else if (url.startsWith("/")) return `${baseUrl}${url}`
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
     }
   },
   adapter: PrismaAdapter(prisma),

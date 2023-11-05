@@ -1,6 +1,14 @@
 "use client"
-import {DndContext, DragEndEvent, useDroppable} from "@dnd-kit/core";
-import dashboardStyles from "@/styles/dashboard/dashboardStyles.module.css"
+import {
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor, MouseSensor,
+  PointerSensor, TouchSensor,
+  useDroppable,
+  useSensor,
+  useSensors
+} from "@dnd-kit/core";
+import dashboardStyles from "@/styles/home/home.module.css"
 import {useEffect, useState} from "react";
 import AddList from "@/components/home/components/AddList";
 import List from "@/components/home/components/List";
@@ -9,15 +17,14 @@ import {useSession} from "next-auth/react";
 import {restrictToParentElement} from "@dnd-kit/modifiers";
 import SaveState from "@/components/home/components/SaveState";
 
-export default function HomepageContainer({initialLists}: {
+export default function HomeContainer({initialLists}: {
   initialLists: DBList[] | null,
 }) {
-  const DEFAULTXPOSITION = 10
-  const DEFAULTYPOSITION = 10
+  const DEFAULTXPOSITION = 50
+  const DEFAULTYPOSITION = 80
   const [isSaved, setIsSaved] = useState(true)
   const [lists, setLists] = useState<List[]>([])
   const [groups, setGroups] = useState()
-  const [color, setColor] = useState({backgroundColor: "rgb(70, 155, 255)"} as React.CSSProperties)
   const {isOver, setNodeRef} = useDroppable({
     id: "homepage-container"
   })
@@ -33,6 +40,15 @@ export default function HomepageContainer({initialLists}: {
       }
     }))
   }, [initialLists]);
+  const mouseSensor = useSensor(MouseSensor)
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 250,
+      tolerance: 10
+    }
+
+  })
+  const sensors = useSensors(touchSensor,mouseSensor)
 
   const session = useSession()
 
@@ -51,16 +67,10 @@ export default function HomepageContainer({initialLists}: {
     setLists([...lists, newList])
   }
 
-  const handleUpdateList = async (list: List) => {
-    if (session && session.data?.user) {
-      await fetch("/api/v1/list", {method: "PATCH", body: JSON.stringify(list)})
-    }
-  }
-
   const handleSaveAll = async (e: React.EventHandler<any>) => {
     if (session && session.data?.user && lists.length > 0 && !isSaved) {
       const response = await fetch("/api/v1/list", {method: "PATCH", body: JSON.stringify(lists)})
-      if(response.ok) setIsSaved(true)
+      if (response.ok) setIsSaved(true)
     }
   }
 
@@ -81,10 +91,14 @@ export default function HomepageContainer({initialLists}: {
   }
 
   return (
-    <DndContext onDragEnd={handleDragEnd} modifiers={[restrictToParentElement]} autoScroll={false}>
+    <DndContext
+      sensors={sensors}
+      onDragEnd={handleDragEnd}
+      modifiers={[restrictToParentElement]}
+      autoScroll={false}>
       <main
         ref={setNodeRef}
-        className={dashboardStyles.dashboard}
+        className={dashboardStyles.homeContainer}
       >
         {lists && lists.map((list) => {
             return (

@@ -1,10 +1,8 @@
-import homepageStyles from "@/styles/homepage/homepageStyles.module.css"
-import HomepageContainer from "@/components/home/HomepageContainer";
-import {List as DBList} from "@prisma/client";
-import {createList, getListsOfUser, updateList as managerUpdateList} from "@/utils/database/listManager";
+import homepageStyles from "@/styles/home/home.module.css"
+import HomeContainer from "@/components/home/HomeContainer";
+import {getListsOfUser} from "@/utils/database/listManager";
 import {getServerSession} from "@/utils/database/auth";
 import Link from "next/link";
-import LogoutModal from "@/components/home/components/LogoutModal";
 
 export default async function HomePage({searchParams}: {searchParams: Record<string, string> | null | undefined}) {
   const session = await getServerSession()
@@ -13,8 +11,7 @@ export default async function HomePage({searchParams}: {searchParams: Record<str
   if (session && session.user) {
     return (
       <div className={homepageStyles.container}>
-        {showModal && <LogoutModal/>}
-        <HomepageContainer
+        <HomeContainer
           initialLists={initialLists}
         />
       </div>

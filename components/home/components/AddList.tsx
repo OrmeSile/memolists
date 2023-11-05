@@ -1,6 +1,6 @@
 'use client'
-import {getSession, SessionProvider} from "next-auth/react";
-import addButtonStyles from "@/styles/dashboard/components/addButton.module.css"
+import {SessionProvider} from "next-auth/react";
+import addButtonStyles from "@/styles/home/add.module.css"
 import {motion} from "framer-motion";
 import {useState} from "react";
 import {useIsSmall} from "@/utils/hooks/useMediaQuery";
@@ -57,8 +57,7 @@ export default function AddList(
     }
 
   return (
-    <SessionProvider>
-      <div className={addButtonStyles.container} style={isSmall ? {flexDirection: "column"}: {}}>
+      <div className={addButtonStyles.container} style={!isSmall ? {flexDirection: "row"}: {}}>
         {isOn &&
             <motion.menu layout
                          className={addButtonStyles.menu}
@@ -95,7 +94,7 @@ export default function AddList(
           id={"new-note"}
           name={"new-note"}
           animate={isOn ? {
-            ...hoverMotion, backgroundColor: "rgb(255,73,47)", scale: 1.05}
+            ...hoverMotion, backgroundColor: "rgb(255,35,35)", scale: 1.05}
             : {}
         }
         >
@@ -108,6 +107,5 @@ export default function AddList(
           </motion.span>
         </motion.button>
       </div>
-    </SessionProvider>
   )
 }

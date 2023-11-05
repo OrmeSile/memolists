@@ -1,0 +1,38 @@
+.overlay{
+    background-color: rgba(0,0,0,0.5);
+    position: absolute;
+    width: 100%;
+    top: 0;
+    left: 0;
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    z-index: 100000;
+}
+
+.container{
+    z-index: 10000000;
+    background-color: white;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    width: 20rem;
+    padding: 1rem;
+}
+.buttonContainer{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    border-bottom: 1px rgb(115,115,115) solid;
+}
+
+.button{
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    font-size: 1.2rem;
+}
