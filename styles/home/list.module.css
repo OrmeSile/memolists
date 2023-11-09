@@ -9,12 +9,6 @@
     border-radius: 0.5rem;
     box-shadow: rgba(0, 0, 0, 0.5) 0 10px 30px;
     overflow: hidden;
-
-}
-
-.row{
-    touch-action: none;
-    border: solid black 1px;
 }
 
 .handle {

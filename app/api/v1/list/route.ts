@@ -1,7 +1,6 @@
 import {getServerSession} from "@/utils/database/auth";
 import {createList, getListsOfUser, updateList, updateLists} from "@/utils/database/listManager";
 import {List as DBList} from "@prisma/client"
-import {toAppList} from "@/utils/converters/ListConverter";
 
 export async function GET(request: Request) {
   const {searchParams} = new URL(request.url)

@@ -1,45 +1,51 @@
-"use client"
+'use client'
 import {
   DndContext,
   DragEndEvent,
-  KeyboardSensor, MouseSensor,
-  PointerSensor, TouchSensor,
+  MouseSensor,
+  TouchSensor,
   useDroppable,
   useSensor,
   useSensors
 } from "@dnd-kit/core";
 import dashboardStyles from "@/styles/home/home.module.css"
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import AddList from "@/components/home/components/AddList";
 import List from "@/components/home/components/List";
-import {List as DBList} from "@prisma/client"
 import {useSession} from "next-auth/react";
 import {restrictToParentElement} from "@dnd-kit/modifiers";
 import SaveState from "@/components/home/components/SaveState";
+import {DbListWithRows} from "@/types/prisma/variations/List";
+import {useDispatchLists, useLists} from "@/components/context/ListContext";
 
 export default function HomeContainer({initialLists}: {
-  initialLists: DBList[] | null,
+  initialLists: DbListWithRows[] | null,
 }) {
+  const lists = useLists()
+  const dispatch = useDispatchLists()
   const DEFAULTXPOSITION = 50
   const DEFAULTYPOSITION = 80
   const [isSaved, setIsSaved] = useState(true)
-  const [lists, setLists] = useState<List[]>([])
   const [groups, setGroups] = useState()
   const {isOver, setNodeRef} = useDroppable({
     id: "homepage-container"
   })
 
   useEffect(() => {
-    if (initialLists) setLists(initialLists.map((list: DBList): List => {
-      return {
-        id: list.id,
-        title: list.title,
-        userId: list.userId,
-        position: {x: list.posX, y: list.posY},
-        isLastActive: false
-      }
-    }))
-  }, [initialLists]);
+    if (initialLists) dispatch({
+      type: 'init',
+      payload: initialLists.map((list: DbListWithRows): List => {
+        return {
+          id: list.id,
+          title: list.title,
+          userId: list.userId,
+          position: {x: list.posX, y: list.posY},
+          isLastActive: false,
+          rows: list.rows
+        }
+      })
+    })
+  }, []);
   const mouseSensor = useSensor(MouseSensor)
   const touchSensor = useSensor(TouchSensor, {
     activationConstraint: {
@@ -48,7 +54,7 @@ export default function HomeContainer({initialLists}: {
     }
 
   })
-  const sensors = useSensors(touchSensor,mouseSensor)
+  const sensors = useSensors(touchSensor, mouseSensor)
 
   const session = useSession()
 
@@ -64,7 +70,25 @@ export default function HomeContainer({initialLists}: {
           })
       })
     const newList: List = await response.json()
-    setLists([...lists, newList])
+    dispatch({
+      type: 'add',
+      payload: newList
+    })
+  }
+
+  const handleAddRow = async (listId: string) => {
+    const response = await fetch(`/api/v1/list/row`,
+      {
+        method: "POST",
+        body: JSON.stringify({listId: listId})
+      })
+    const newRow = await response.json()
+    const list = lists.find(list => list.id === listId)
+    if(!list) throw new Error('list not found')
+    dispatch({
+      type: "change",
+      payload: {...list, rows: [...list.rows, newRow]}
+    })
   }
 
   const handleSaveAll = async (e: React.EventHandler<any>) => {
@@ -82,45 +106,46 @@ export default function HomeContainer({initialLists}: {
     if (list) {
       list.position = {x: e.delta.x + list.position.x, y: e.delta.y + list.position.y}
       list.isLastActive = true
-      setLists(lists.map((x) => {
-        if (x.id === list.id) return list;
-        return {...x, isLastActive: false};
-      }))
+      dispatch({
+        type: "change",
+        payload: list
+      })
       setIsSaved(false)
     }
   }
 
   return (
-    <DndContext
-      sensors={sensors}
-      onDragEnd={handleDragEnd}
-      modifiers={[restrictToParentElement]}
-      autoScroll={false}>
-      <main
-        ref={setNodeRef}
-        className={dashboardStyles.homeContainer}
-      >
-        {lists && lists.map((list) => {
-            return (
-              <List
-                key={list.id}
-                list={list}
-              />
-            )
-          }
-        )}
-        <nav>
-          <SaveState
-            key={isSaved ? "saved" : "not saved"}
-            saveAll={handleSaveAll}
-            isSaved={isSaved}
-          />
-          <AddList
-            handleGroupList={handleAddGroup}
-            handleAddList={handleAddList}
-          />
-        </nav>
-      </main>
-    </DndContext>
+      <DndContext
+        sensors={sensors}
+        onDragEnd={handleDragEnd}
+        modifiers={[restrictToParentElement]}
+        autoScroll={false}>
+        <main
+          ref={setNodeRef}
+          className={dashboardStyles.homeContainer}
+        >
+          {lists.length > 0 && lists.map((list) => {
+              return (
+                <List
+                  addRow={handleAddRow}
+                  key={list.id}
+                  list={list}
+                />
+              )
+            }
+          )}
+          <nav>
+            <SaveState
+              key={isSaved ? "saved" : "not saved"}
+              saveAll={handleSaveAll}
+              isSaved={isSaved}
+            />
+            <AddList
+              handleGroupList={handleAddGroup}
+              handleAddList={handleAddList}
+            />
+          </nav>
+        </main>
+      </DndContext>
   )
 }

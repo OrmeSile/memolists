@@ -1,11 +1,14 @@
 import listStyles from "@/styles/home/list.module.css";
 import rowStyles from "@/styles/home/row.module.css";
-import {useDraggable, useSensors} from "@dnd-kit/core";
+import {useDraggable} from "@dnd-kit/core";
 import {motion} from "framer-motion";
 import {useState} from "react";
 import {ListRow} from "@/components/home/components/ListRow";
 
-export default function List({list}: { list: List }) {
+export default function List({list, addRow}: {
+    list: List,
+    addRow: any
+}) {
     const [isOpen, setIsOpen] = useState(false)
 
     const {attributes, listeners, setNodeRef, transform} = useDraggable({
@@ -16,9 +19,6 @@ export default function List({list}: { list: List }) {
         left: list.position.x
     } as React.CSSProperties
 
-    const getPosition = () => {
-        return
-    }
     const transformStyles = transform
         ? {
             boxShadow: "rgba(0, 0, 0, 0.8) 0px 15px 45px",
@@ -37,12 +37,14 @@ export default function List({list}: { list: List }) {
         minWidth: "80%",
         minHeight: "80%",
         position: "absolute",
+        zIndex: 100000,
         top: "10%",
         left: "10%"
     } as React.CSSProperties : undefined
 
-    const handleButton = (e: React.MouseEvent) => {
+    const handleAddButton = (e: React.MouseEvent) => {
         e.stopPropagation()
+        addRow(list.id)
     }
 
     return (
@@ -87,22 +89,24 @@ export default function List({list}: { list: List }) {
                             }
                 />
             </motion.div>
-            <div onClick={() => {
-                setIsOpen(!isOpen)
+            <div onClick={(e) => {
+                if (!isOpen) setIsOpen(true)
             }
             }>
-                {list.rows &&
-                    <ul>
-                        {list.rows.map((row) => {
+                <ul className={rowStyles.list}>
+
+                    {list.rows &&
+                        list.rows.map((row) => {
                             return <ListRow key={row.id}/>
-                        })}
-                    </ul>
-                }
-                {isOpen &&
-                    <li className={rowStyles.row}>
-                        <button className={rowStyles.add} onClick={handleButton}>add a row</button>
-                    </li>
-                }
+                        })
+                    }
+                    {isOpen &&
+                        <li className={rowStyles.row}>
+                            <button className={rowStyles.add} onClick={handleAddButton}>add a row</button>
+                        </li>
+                    }
+                </ul>
+
             </div>
         </div>
     )
