@@ -14,7 +14,6 @@ export const getMoviesbyTitle = async (title: string) => {
       popularity: 'desc'
     }
   })
-  console.log(localMovies.length)
   if(localMovies.length)return localMovies
   const response = await fetchMoviesByTitle(title)
   const fetchedMovies = await response.json()

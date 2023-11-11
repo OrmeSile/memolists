@@ -3,6 +3,7 @@ import Link from "next/link";
 import Header from "@/components/header/Header";
 import {Modal} from "@/components/global/Modal";
 import {SignIn} from "@/components/forms/SignIn";
+import {Footer} from "@/components/footer/Footer";
 
 
 export default function Main() {
@@ -15,5 +16,6 @@ export default function Main() {
         <li>hop</li>
         <li>hop</li>
       </ul>
+      <Footer/>
     </div>)
 }

@@ -2,8 +2,53 @@ import prisma from "@/utils/database/databaseClient";
 import fs from "node:fs";
 import readline from "node:readline"
 import events from "node:events";
+import {existsSync, mkdirSync} from "fs";
+import * as zlib from "zlib";
+import {pipeline} from "node:stream";
+import * as http from "http";
 
-(async function lineByLine() {
+const createDirIfNotExists = (dir: fs.PathLike) => {
+  !existsSync(dir) ? mkdirSync(dir) : undefined
+}
+const movieFolderPath = `${__dirname}/../../data/movies`
+const archivePath = `${movieFolderPath}/movies.gz`;
+const jsonPath = `${movieFolderPath}/movies.json`
+const currentDate = new Date();
+const formattedDate = `${currentDate.getUTCMonth()}_${currentDate.getUTCDate()}_${currentDate.getUTCFullYear()}`;
+const moviePrefixer = 'movie_ids_';
+const fullRemoteFileName= `${moviePrefixer}${formattedDate}.json.gz`;
+const baseFetchUrl = 'http://files.tmdb.org/p/exports/'
+const combinedFetchUrl = `${baseFetchUrl}${fullRemoteFileName}`;
+
+(() => {
+  try{
+    http.get(combinedFetchUrl, (res) => {
+      createDirIfNotExists(movieFolderPath)
+      if(fs.existsSync(archivePath)) fs.unlinkSync(archivePath)
+      const writeStream = fs.createWriteStream(archivePath)
+      res.pipe(writeStream)
+      writeStream.on('finish', () => {
+        writeStream.close();
+        console.log(`download completed for ${formattedDate} movie IDs`);
+        unzipArchive();
+        lineByLine()
+      })
+    })
+  } catch(err) {
+    console.log(err)
+  }
+})()
+
+const unzipArchive = () => {
+  const unzip = zlib.createUnzip()
+  const input = fs.createReadStream(archivePath)
+  const output = fs.createWriteStream(jsonPath)
+  pipeline(input, unzip, output, (err) => {
+    if(err) console.log("pipeline failed", err)
+  })
+}
+
+async function lineByLine() {
   try {
     const rl = readline.createInterface({
       input: fs.createReadStream('./data/movies/movies.json'),
@@ -23,7 +68,8 @@ import events from "node:events";
         popularity: number,
         video: boolean
       } = JSON.parse(line)
-      const {id,
+      const {
+        id,
         video,
         ...rest
       } = {
@@ -33,14 +79,13 @@ import events from "node:events";
       movies.push(rest)
     });
     await events.once(rl, 'close')
-    await prisma.movie.createMany({
+    const create = await prisma.movie.createMany({
       // @ts-ignore
       data: movies,
       skipDuplicates: true
     })
-    const used = process.memoryUsage().heapUsed / 1024 / 1024;
-    console.log(`The script uses approximately ${Math.round(used * 100) / 100} MB`);
+    console.log(`created ${create.count} entries`)
   } catch (err) {
     console.log(err)
   }
-})()
+}
