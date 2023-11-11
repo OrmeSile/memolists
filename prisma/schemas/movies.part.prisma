@@ -1,0 +1,22 @@
+model Movie {
+  adult Boolean
+  id String @id @default(cuid())
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  imdb_id String?
+  tmdb_id Int @unique
+  backdrop_path String?
+  poster_path String?
+  title String?
+  original_title String
+  release_date DateTime? @db.Date
+  overview String?
+  popularity Float
+  //   genres Genre?
+}
+
+// model Genre {
+//   id String @id @default(cuid())
+//   tmdb_id String
+//   name String
+//   movies Movie[]
+// }

@@ -17,6 +17,7 @@ import {restrictToParentElement} from "@dnd-kit/modifiers";
 import SaveState from "@/components/home/components/SaveState";
 import {DbListWithRows} from "@/types/prisma/variations/List";
 import {useDispatchLists, useLists} from "@/components/context/ListContext";
+import {log} from "util";
 
 export default function HomeContainer({initialLists}: {
   initialLists: DbListWithRows[] | null,
@@ -124,7 +125,7 @@ export default function HomeContainer({initialLists}: {
           ref={setNodeRef}
           className={dashboardStyles.homeContainer}
         >
-          {lists.length > 0 && lists.map((list) => {
+          {lists.length && lists.map((list) => {
               return (
                 <List
                   addRow={handleAddRow}
@@ -136,7 +137,6 @@ export default function HomeContainer({initialLists}: {
           )}
           <nav>
             <SaveState
-              key={isSaved ? "saved" : "not saved"}
               saveAll={handleSaveAll}
               isSaved={isSaved}
             />

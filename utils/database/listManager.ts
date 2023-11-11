@@ -1,5 +1,4 @@
 import prisma from "@/utils/database/databaseClient";
-import {List as DBList} from "@prisma/client"
 import {toAppList, toDBList} from "@/utils/converters/ListConverter";
 
 async function createList(list: { title: string, userId: string, posX: number, posY: number }) {
@@ -17,9 +16,7 @@ async function getOneList(id: string) {
 }
 
 async function getListsOfUser(id: string) {
-  const lists = await prisma.list.findMany({where: {user: {id: id}}, include: {rows: true}})
-  console.log("lists",lists)
-  return lists
+  return prisma.list.findMany({where: {user: {id: id}}, include: {rows: true}});
 
 }
 

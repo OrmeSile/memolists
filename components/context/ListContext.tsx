@@ -27,7 +27,7 @@ const listsReducer = (lists: List[], action: ListPayload) => {
       })
     }
     case 'init': {
-      return [...lists, ...action.payload]
+      return action.payload
     }
     default: throw new Error('operation not supported')
   }

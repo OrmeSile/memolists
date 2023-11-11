@@ -1,3 +1,4 @@
+export LC_ALL=C.UTF-8
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 rm "${SCRIPT_DIR}/schema.prisma";
 for f in "${SCRIPT_DIR}"/schemas/*.part.prisma;
