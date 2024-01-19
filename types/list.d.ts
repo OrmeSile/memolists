@@ -7,7 +7,7 @@ type List = {
     y: number
   }
   isLastActive: boolean,
-  rows : Row[]
+  rows: Row[]
 }
 
 interface ListSinglePayload {

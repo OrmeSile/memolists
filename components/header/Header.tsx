@@ -6,20 +6,20 @@ import {SignOut} from "@/components/forms/SignOut";
 import {SignIn} from "@/components/forms/SignIn";
 
 export default async function Header() {
-    const session = await getServerSession()
-    return (
-        <header className={headerStyles.header}>
-            <Link href={"/"} className={headerStyles.title}>Memos</Link>
-            <div className={headerStyles.menu}>
-                {session ?
-                    <ModalButton name={"sign out"}>
-                        <SignOut/>
-                    </ModalButton>
-                    : <ModalButton name={"sign in"}>
-                        <SignIn/>
-                    </ModalButton>
-                }
-            </div>
-        </header>
-    )
+  const session = await getServerSession()
+  return (
+    <header className={headerStyles.header}>
+      <Link href={"/"} className={headerStyles.title}>Memos</Link>
+      <div className={headerStyles.menu}>
+        {session ?
+          <ModalButton name={"sign out"}>
+            <SignOut/>
+          </ModalButton>
+          : <ModalButton name={"sign in"}>
+            <SignIn/>
+          </ModalButton>
+        }
+      </div>
+    </header>
+  )
 }

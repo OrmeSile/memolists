@@ -7,51 +7,58 @@ import * as zlib from "zlib";
 import {pipeline} from "node:stream";
 import * as http from "http";
 
-const createDirIfNotExists = (dir: fs.PathLike) => {
-  !existsSync(dir) ? mkdirSync(dir) : undefined
+const formatDate = () => {
+  const currentDate = new Date();
+  currentDate.setDate(currentDate.getDate() - 1)
+  return `${(currentDate.getUTCMonth()+1).toLocaleString('en-US',{minimumIntegerDigits: 2})}_${currentDate.getUTCDate().toLocaleString('en-US',{minimumIntegerDigits: 2} )}_${currentDate.getUTCFullYear()}`;
 }
+
 const movieFolderPath = `${__dirname}/../../data/movies`
 const archivePath = `${movieFolderPath}/movies.gz`;
 const jsonPath = `${movieFolderPath}/movies.json`
-const currentDate = new Date();
-const formattedDate = `${currentDate.getUTCMonth()}_${currentDate.getUTCDate()}_${currentDate.getUTCFullYear()}`;
 const moviePrefixer = 'movie_ids_';
-const fullRemoteFileName= `${moviePrefixer}${formattedDate}.json.gz`;
+const formattedDate = formatDate()
+const fullRemoteFileName = `${moviePrefixer}${formattedDate}.json.gz`;
 const baseFetchUrl = 'http://files.tmdb.org/p/exports/'
 const combinedFetchUrl = `${baseFetchUrl}${fullRemoteFileName}`;
 
 (() => {
-  try{
+  try {
+    console.log(fullRemoteFileName)
     http.get(combinedFetchUrl, (res) => {
       createDirIfNotExists(movieFolderPath)
-      if(fs.existsSync(archivePath)) fs.unlinkSync(archivePath)
+      if (fs.existsSync(archivePath)) fs.unlinkSync(archivePath)
       const writeStream = fs.createWriteStream(archivePath)
       res.pipe(writeStream)
       writeStream.on('finish', () => {
-        writeStream.close();
-        console.log(`download completed for ${formattedDate} movie IDs`);
-        unzipArchive();
-        lineByLine()
+        writeStream.close()
+        console.log(`download completed for ${formattedDate} movie IDs`)
+        unzipArchive()
+        void lineByLine()
       })
     })
-  } catch(err) {
+  } catch (err) {
     console.log(err)
   }
 })()
+
+const createDirIfNotExists = (dir: fs.PathLike) => {
+  !existsSync(dir) ? mkdirSync(dir) : undefined
+}
 
 const unzipArchive = () => {
   const unzip = zlib.createUnzip()
   const input = fs.createReadStream(archivePath)
   const output = fs.createWriteStream(jsonPath)
   pipeline(input, unzip, output, (err) => {
-    if(err) console.log("pipeline failed", err)
+    if (err) console.log("pipeline failed", err)
   })
 }
 
 async function lineByLine() {
   try {
     const rl = readline.createInterface({
-      input: fs.createReadStream('./data/movies/movies.json'),
+      input: fs.createReadStream(jsonPath),
       crlfDelay: Infinity
     })
     const movies = [] as {

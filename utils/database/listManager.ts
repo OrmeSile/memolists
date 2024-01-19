@@ -1,7 +1,12 @@
 import prisma from "@/utils/database/databaseClient";
 import {toAppList, toDBList} from "@/utils/converters/ListConverter";
 
-async function createList(list: { title: string, userId: string, posX: number, posY: number }) {
+async function createList(list: {
+  title: string,
+  userId: string,
+  posX: number,
+  posY: number
+}) {
   return toAppList(await prisma.list.create(
     {data: list}
   ))
@@ -42,6 +47,12 @@ async function createRow(listId: string) {
   })
 }
 
+async function deleteRow({listId, rowId}: { listId: string, rowId: string }) {
+  return prisma.listRow.delete({
+    where: {id: rowId, listId}
+  })
+}
+
 export {
   createList,
   getAllLists,
@@ -49,5 +60,6 @@ export {
   getListsOfUser,
   updateList,
   updateLists,
-  createRow
+  createRow,
+  deleteRow
 }

@@ -21,6 +21,7 @@ import {log} from "util";
 
 export default function HomeContainer({initialLists}: {
   initialLists: DbListWithRows[] | null,
+
 }) {
   const lists = useLists()
   const dispatch = useDispatchLists()
@@ -85,16 +86,33 @@ export default function HomeContainer({initialLists}: {
       })
     const newRow = await response.json()
     const list = lists.find(list => list.id === listId)
-    if(!list) throw new Error('list not found')
+    if (!list) throw new Error('list not found')
     dispatch({
       type: "change",
       payload: {...list, rows: [...list.rows, newRow]}
     })
+    return newRow.id
+  }
+
+  const handleDeleteRow = async ({listId, rowId}: {
+    listId: string,
+    rowId: string
+  }) => {
+    const response = await fetch('/api/v1/list/row',
+      {
+        method: 'DELETE',
+        body: JSON.stringify({listId, rowId})
+      })
+    if (response.status === 200) return
+    throw new Error("Can't delete this row.")
   }
 
   const handleSaveAll = async (e: React.EventHandler<any>) => {
     if (session && session.data?.user && lists.length > 0 && !isSaved) {
-      const response = await fetch("/api/v1/list", {method: "PATCH", body: JSON.stringify(lists)})
+      const response = await fetch("/api/v1/list", {
+        method: "PATCH",
+        body: JSON.stringify(lists)
+      })
       if (response.ok) setIsSaved(true)
     }
   }
@@ -105,7 +123,10 @@ export default function HomeContainer({initialLists}: {
   async function handleDragEnd(e: DragEndEvent) {
     const list = lists.find((x) => x.id.toString() === e.active.id)
     if (list) {
-      list.position = {x: e.delta.x + list.position.x, y: e.delta.y + list.position.y}
+      list.position = {
+        x: e.delta.x + list.position.x,
+        y: e.delta.y + list.position.y
+      }
       list.isLastActive = true
       dispatch({
         type: "change",
@@ -116,36 +137,37 @@ export default function HomeContainer({initialLists}: {
   }
 
   return (
-      <DndContext
-        sensors={sensors}
-        onDragEnd={handleDragEnd}
-        modifiers={[restrictToParentElement]}
-        autoScroll={false}>
-        <main
-          ref={setNodeRef}
-          className={dashboardStyles.homeContainer}
-        >
-          {lists.length && lists.map((list) => {
-              return (
-                <List
-                  addRow={handleAddRow}
-                  key={list.id}
-                  list={list}
-                />
-              )
-            }
-          )}
-          <nav>
-            <SaveState
-              saveAll={handleSaveAll}
-              isSaved={isSaved}
-            />
-            <AddList
-              handleGroupList={handleAddGroup}
-              handleAddList={handleAddList}
-            />
-          </nav>
-        </main>
-      </DndContext>
+    <DndContext
+      sensors={sensors}
+      onDragEnd={handleDragEnd}
+      modifiers={[restrictToParentElement]}
+      autoScroll={false}>
+      <main
+        ref={setNodeRef}
+        className={dashboardStyles.homeContainer}
+      >
+        {lists.length && lists.map((list) => {
+            return (
+              <List
+                deleteRow={handleDeleteRow}
+                addRow={handleAddRow}
+                key={list.id}
+                list={list}
+              />
+            )
+          }
+        )}
+        <nav>
+          <SaveState
+            saveAll={handleSaveAll}
+            isSaved={isSaved}
+          />
+          <AddList
+            handleGroupList={handleAddGroup}
+            handleAddList={handleAddList}
+          />
+        </nav>
+      </main>
+    </DndContext>
   )
 }

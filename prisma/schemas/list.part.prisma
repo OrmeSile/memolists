@@ -1,4 +1,5 @@
 model ListRow {
+  type String @default("text")
   id        String   @id @default(cuid())
   createdAt DateTime @default(now()) @db.Timestamptz()
   content   String   @db.VarChar(255)

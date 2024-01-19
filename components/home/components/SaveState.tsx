@@ -20,7 +20,7 @@ export default function SaveState({isSaved, saveAll}: {
   return (
     <SessionProvider>
       <motion.div
-        style={!isSmall ? {right: "2rem", bottom: "7rem" }: {}}
+        style={!isSmall ? {right: "2rem", bottom: "7rem"} : {}}
         onClick={handleClick}
         className={saveStyles.container}
         whileTap={{scale: 0.95}}

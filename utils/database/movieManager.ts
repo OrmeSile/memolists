@@ -3,7 +3,7 @@ import {Movie} from ".prisma/client";
 import {fetchMoviesByTitle} from "@/utils/database/movieApiFetcher";
 
 export const getMoviesbyTitle = async (title: string) => {
-  const localMovies =await prisma.movie.findMany({
+  const localMovies = await prisma.movie.findMany({
     where: {
       original_title: {
         contains: title,
@@ -14,7 +14,7 @@ export const getMoviesbyTitle = async (title: string) => {
       popularity: 'desc'
     }
   })
-  if(localMovies.length)return localMovies
+  if (localMovies.length) return localMovies
   const response = await fetchMoviesByTitle(title)
   const fetchedMovies = await response.json()
   if (fetchedMovies.length) return saveMoviesToDb(fetchedMovies.results)
@@ -22,7 +22,7 @@ export const getMoviesbyTitle = async (title: string) => {
 }
 
 export const saveMoviesToDb = async (movies: Movie[]) => {
-  const formattedMovies = movies.map((movie) =>{
+  const formattedMovies = movies.map((movie) => {
     const {
       imdb_id,
       tmdb_id,

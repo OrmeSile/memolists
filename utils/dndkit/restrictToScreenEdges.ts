@@ -1,14 +1,15 @@
 import {Modifier} from "@dnd-kit/core";
 import type {ClientRect} from '@dnd-kit/core';
 import type {Transform} from '@dnd-kit/utilities';
+
 let isSeen = false
 
 export const restrictToEdges: Modifier = ({
-  transform,
-  draggingNodeRect,
-  windowRect,
-  activatorEvent,
-}) => {
+                                            transform,
+                                            draggingNodeRect,
+                                            windowRect,
+                                            activatorEvent,
+                                          }) => {
   if (!draggingNodeRect || !windowRect) {
     return transform;
   }
@@ -16,10 +17,10 @@ export const restrictToEdges: Modifier = ({
   return restrictToBoundingRect(transform, draggingNodeRect, windowRect, itemData)
 };
 
-const filterTransform = (transformValue: string): {x: number, y: number} => {
+const filterTransform = (transformValue: string): { x: number, y: number } => {
   const transformFilter = RegExp(/\d+(?=px)/gm)
   const filteredValues = transformFilter.exec(transformValue)
-  if(Array.isArray(filteredValues) && filteredValues?.length >=2){
+  if (Array.isArray(filteredValues) && filteredValues?.length >= 2) {
     return {
       x: parseInt(filteredValues[0]),
       y: parseInt(filteredValues[1])
@@ -27,11 +28,12 @@ const filterTransform = (transformValue: string): {x: number, y: number} => {
   }
   return {x: 0, y: 0}
 }
+
 export function restrictToBoundingRect(
   transform: Transform,
   rect: ClientRect,
   boundingRect: ClientRect,
-  itemData: {x: number, y: number}
+  itemData: { x: number, y: number }
 ): Transform {
   const value = {
     ...transform,

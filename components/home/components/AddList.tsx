@@ -33,6 +33,7 @@ export default function AddList(
     setIsOn(!isOn)
 
   }
+
   async function handleNoteClick(e: React.MouseEvent) {
     setIsOn(!isOn)
     handleAddList()
@@ -57,55 +58,59 @@ export default function AddList(
     }
 
   return (
-      <div className={addButtonStyles.container} style={!isSmall ? {flexDirection: "row"}: {}}>
-        {isOn &&
-            <motion.menu layout
-                         className={addButtonStyles.menu}
-                         variants={variants}
-                         animate={isOn && "minWidth"}
-            >
-                <motion.button
-                    className={addButtonStyles.row}
-                    whileHover={rowHoverMotion}
-                    whileTap={tapMotion}
-                    onClick={handleNoteClick}
-
-                >
-                    Add a note...
-                </motion.button>
-                <motion.button
-                    className={addButtonStyles.row}
-                    whileHover={rowHoverMotion}
-                    whileTap={tapMotion}
-                    onClick={handleGroupClick}
-                >
-                    Add a group...
-                </motion.button>
-            </motion.menu>
-        }
-        <motion.button
-          onClick={handleButtonClick}
-          layout
-          whileHover={{
-            ...hoverMotion
-          }}
-          className={addButtonStyles.button}
-          type={"submit"}
-          id={"new-note"}
-          name={"new-note"}
-          animate={isOn ? {
-            ...hoverMotion, backgroundColor: "rgb(255,35,35)", scale: 1.05}
-            : {}
-        }
+    <div className={addButtonStyles.container}
+         style={!isSmall ? {flexDirection: "row"} : {}}>
+      {isOn &&
+        <motion.menu layout
+                     className={addButtonStyles.menu}
+                     variants={variants}
+                     animate={isOn && "minWidth"}
         >
-          <motion.span
-            className={addButtonStyles.text}
-            whileHover={hoverMotion}
-            animate={isOn ? {rotate: -45, scale: 1.05} : {}}
+          <motion.button
+            className={addButtonStyles.row}
+            whileHover={rowHoverMotion}
+            whileTap={tapMotion}
+            onClick={handleNoteClick}
+
           >
-            &#65291;
-          </motion.span>
-        </motion.button>
-      </div>
+            Add a note...
+          </motion.button>
+          <motion.button
+            className={addButtonStyles.row}
+            whileHover={rowHoverMotion}
+            whileTap={tapMotion}
+            onClick={handleGroupClick}
+          >
+            Add a group...
+          </motion.button>
+        </motion.menu>
+      }
+      <motion.button
+        onClick={handleButtonClick}
+        layout
+        whileHover={{
+          ...hoverMotion
+        }}
+        className={addButtonStyles.button}
+        type={"submit"}
+        id={"new-note"}
+        name={"new-note"}
+        animate={isOn ? {
+            ...hoverMotion,
+            backgroundColor: "rgb(255,35,35)",
+            scale: 1.05
+          }
+          : {}
+        }
+      >
+        <motion.span
+          className={addButtonStyles.text}
+          whileHover={hoverMotion}
+          animate={isOn ? {rotate: -45, scale: 1.05} : {}}
+        >
+          &#65291;
+        </motion.span>
+      </motion.button>
+    </div>
   )
 }

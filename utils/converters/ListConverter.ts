@@ -1,6 +1,7 @@
 import List from "@/components/home/components/List";
 import {List as DBList} from "@prisma/client";
-export function toDBList(list: List): DBList{
+
+export function toDBList(list: List): DBList {
   return {
     id: list.id,
     userId: list.userId,

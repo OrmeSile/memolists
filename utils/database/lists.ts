@@ -1,5 +1,7 @@
 import {PrismaClient} from '@prisma/client';
+
 const prisma = new PrismaClient()
+
 export async function getAllLists() {
   try {
     const lists = await prisma.list.findMany({

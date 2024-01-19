@@ -6,7 +6,9 @@ import Link from "next/link";
 import {ListsProvider} from "@/components/context/ListContext";
 import {getMoviesbyTitle} from "@/utils/database/movieManager";
 
-export default async function HomePage({searchParams}: { searchParams: Record<string, string> | null | undefined }) {
+export default async function HomePage({searchParams}: {
+  searchParams: Record<string, string> | null | undefined
+}) {
   const session = await getServerSession()
   const initialLists = session
     ? await getListsOfUser(session.user.id)
