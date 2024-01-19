@@ -24,19 +24,7 @@ const combinedFetchUrl = `${baseFetchUrl}${fullRemoteFileName}`;
 
 (() => {
   try {
-    console.log(fullRemoteFileName)
-    http.get(combinedFetchUrl, (res) => {
-      createDirIfNotExists(movieFolderPath)
-      if (fs.existsSync(archivePath)) fs.unlinkSync(archivePath)
-      const writeStream = fs.createWriteStream(archivePath)
-      res.pipe(writeStream)
-      writeStream.on('finish', () => {
-        writeStream.close()
-        console.log(`download completed for ${formattedDate} movie IDs`)
-        unzipArchive()
-        void lineByLine()
-      })
-    })
+    http.get(combinedFetchUrl, (res) => downloadDailyBackup(res))
   } catch (err) {
     console.log(err)
   }
@@ -46,53 +34,72 @@ const createDirIfNotExists = (dir: fs.PathLike) => {
   !existsSync(dir) ? mkdirSync(dir) : undefined
 }
 
-const unzipArchive = () => {
-  const unzip = zlib.createUnzip()
-  const input = fs.createReadStream(archivePath)
-  const output = fs.createWriteStream(jsonPath)
-  pipeline(input, unzip, output, (err) => {
-    if (err) console.log("pipeline failed", err)
+const downloadDailyBackup = (res: http.IncomingMessage) => {
+  createDirIfNotExists(movieFolderPath)
+  if (fs.existsSync(archivePath)) fs.unlinkSync(archivePath)
+  const writeStream = fs.createWriteStream(archivePath)
+  res.pipe(writeStream)
+  writeStream.on('finish', () => {
+    writeStream.close()
+    console.log(`download completed for ${formattedDate} movie IDs`)
+    void unzipArchive()
   })
 }
 
-async function lineByLine() {
-  try {
-    const rl = readline.createInterface({
-      input: fs.createReadStream(jsonPath),
-      crlfDelay: Infinity
+  const unzipArchive = async () => {
+    const unzip = zlib.createUnzip()
+    const input = fs.createReadStream(archivePath)
+    const output = fs.createWriteStream(jsonPath)
+    pipeline(input, unzip, output, (err) => {
+      if (err) return console.log("pipeline failed", err)
+      addToDBLineByLine()
     })
-    const movies = [] as {
-      adult: boolean,
-      tmdb_id: number,
-      original_title: string,
-      popularity: number
-    }[]
-    rl.on('line', (line) => {
-      const movieJSON: {
-        adult: boolean,
-        id: number,
-        original_title: string,
-        popularity: number,
-        video: boolean
-      } = JSON.parse(line)
-      const {
-        id,
-        video,
-        ...rest
-      } = {
-        ...movieJSON,
-        tmdb_id: movieJSON.id
-      }
-      movies.push(rest)
-    });
-    await events.once(rl, 'close')
-    const create = await prisma.movie.createMany({
-      // @ts-ignore
-      data: movies,
-      skipDuplicates: true
-    })
-    console.log(`created ${create.count} entries`)
-  } catch (err) {
-    console.log(err)
   }
-}
+
+  const addToDBLineByLine = async () => {
+    try {
+      const rl = readline.createInterface({
+        input: fs.createReadStream('./data/movies/movies.json'),
+        crlfDelay: Infinity
+      })
+      const movies = [] as {
+        adult: boolean,
+        tmdb_id: number,
+        original_title: string,
+        popularity: number
+      }[]
+
+      rl.on('line', (line) => {
+        const movieJSON: {
+          adult: boolean,
+          id: number,
+          original_title: string,
+          popularity: number,
+          video: boolean
+        } = JSON.parse(line)
+
+        const {
+          id,
+          video,
+          ...rest
+        } = {
+          ...movieJSON,
+          tmdb_id: movieJSON.id
+        }
+
+        movies.push(rest)
+
+      });
+
+      await events.once(rl, 'close')
+
+      const create = await prisma.movie.createMany({
+        // @ts-ignore
+        data: movies,
+        skipDuplicates: true
+      })
+      console.log(`created ${create.count} entries`)
+    } catch (err) {
+      console.log(err)
+    }
+  }
